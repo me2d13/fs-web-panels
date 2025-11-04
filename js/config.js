@@ -1,0 +1,37 @@
+// ========================================
+// MENU CONFIGURATION
+// ========================================
+// Define menu items and their navigation targets
+export const menuItems = [
+    {
+        file: 'index.html',
+        title: 'Home',
+    },
+    {
+        file: 'views.html',
+        title: 'Views',
+    },
+    {
+        file: 'settings.html',
+        title: 'Settings',
+    },
+];
+
+// ========================================
+// SIMULATOR AND PLANE CONFIGURATION
+// ========================================
+// Define available simulators and their planes
+// To add a new simulator or plane, simply add it to this object
+export const simulatorConfig = {
+    'X-Plane': [
+        { name: 'Zibo 737', displayName: 'Zibo 737', serviceFile: 'js/xp-zibo737.js' },
+    ],
+    'MSFS': [
+        { name: 'GA', displayName: 'GA', serviceFile: 'views/msfs-ga.js' },
+        { name: '737 MAX', displayName: '737 MAX', serviceFile: 'js/msfs-737max.js' }
+    ]
+};
+
+export const msfsConfig = {
+    rootUrl: 'http://192.168.1.105:5018',
+}

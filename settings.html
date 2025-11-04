@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - FS screens</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="module" src="js/menu.js"></script>
+    <style>
+        .settings-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .simulator-column {
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .simulator-column h2 {
+            margin-top: 0;
+            color: #007bff;
+            text-align: center;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        
+        .plane-button {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 15px;
+            background-color: #3a3a3a;
+            color: #e8f5bc;
+            border: 2px solid #555;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .plane-button:hover {
+            background-color: #4a4a4a;
+            border-color: #007bff;
+        }
+        
+        .plane-button.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+            font-weight: bold;
+            transform: scale(1.02);
+        }
+        
+        .current-selection {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .current-selection h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        
+        .selection-info {
+            font-size: 20px;
+            color: #e8f5bc;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .simulator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-container">
+        <h1>Settings</h1>
+        <p>Select your simulator and plane:</p>
+        
+        <div class="simulator-grid" id="simulator-grid">
+            <!-- Simulator columns will be dynamically generated here -->
+        </div>
+        
+        <div class="current-selection">
+            <h3>Current Selection</h3>
+            <p class="selection-info" id="current-selection-text">No plane selected</p>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { simulatorConfig } from './js/config.js';
+        
+        // ========================================
+        // UI GENERATION
+        // ========================================
+        
+        // Function to build the UI from configuration
+        function buildUI() {
+            const gridContainer = document.getElementById('simulator-grid');
+            gridContainer.innerHTML = ''; // Clear existing content
+            
+            // Loop through each simulator in the config
+            Object.keys(simulatorConfig).forEach(simulatorName => {
+                const planes = simulatorConfig[simulatorName];
+                
+                // Create simulator column
+                const column = document.createElement('div');
+                column.className = 'simulator-column';
+                
+                // Create simulator heading
+                const heading = document.createElement('h2');
+                heading.textContent = simulatorName;
+                column.appendChild(heading);
+                
+                // Create plane buttons
+                planes.forEach(plane => {
+                    const button = document.createElement('button');
+                    button.className = 'plane-button';
+                    button.setAttribute('data-simulator', simulatorName);
+                    button.setAttribute('data-plane', plane.name);
+                    button.textContent = plane.displayName;
+                    
+                    // Add click event
+                    button.addEventListener('click', function() {
+                        const simulator = this.getAttribute('data-simulator');
+                        const planeName = this.getAttribute('data-plane');
+                        saveSelection(simulator, planeName);
+                    });
+                    
+                    column.appendChild(button);
+                });
+                
+                gridContainer.appendChild(column);
+            });
+        }
+        
+        // ========================================
+        // SELECTION MANAGEMENT
+        // ========================================
+        
+        // Function to load current selection from localStorage
+        function loadSelection() {
+            const simulator = localStorage.getItem('selectedSimulator');
+            const plane = localStorage.getItem('selectedPlane');
+            
+            if (simulator && plane) {
+                updateSelectionDisplay(simulator, plane);
+                highlightSelectedButton(simulator, plane);
+            }
+        }
+        
+        // Function to update the display
+        function updateSelectionDisplay(simulator, plane) {
+            const displayText = `${simulator} - ${plane}`;
+            document.getElementById('current-selection-text').textContent = displayText;
+        }
+        
+        // Function to highlight the selected button
+        function highlightSelectedButton(simulator, plane) {
+            // Remove selected class from all buttons
+            document.querySelectorAll('.plane-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Add selected class to the matching button
+            const selectedButton = document.querySelector(
+                `.plane-button[data-simulator="${simulator}"][data-plane="${plane}"]`
+            );
+            if (selectedButton) {
+                selectedButton.classList.add('selected');
+            }
+        }
+        
+        // Function to save selection
+        function saveSelection(simulator, plane) {
+            localStorage.setItem('selectedSimulator', simulator);
+            localStorage.setItem('selectedPlane', plane);
+            updateSelectionDisplay(simulator, plane);
+            highlightSelectedButton(simulator, plane);
+        }
+        
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+        
+        // Initialize immediately - config is already imported
+        buildUI();
+        loadSelection();
+    </script>
+</body>
+</html>
+

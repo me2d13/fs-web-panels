@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Views - FS screens</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="views/views.css">
+    <script type="module" src="js/menu.js"></script>
+</head>
+<body>
+    <script type="module">
+        import { simulatorConfig } from './js/config.js';
+        import { hasConfiguredSettings, getSimulatorSettings } from './js/settings-utils.js';
+        
+        // Service module will be loaded dynamically
+        let service = null;
+
+        const inButtons = [
+            {
+                style: "top: 5px; left: 50%; transform: translate(-50%, 0);",
+                text: 'After overhead',
+            },
+            {
+                style: "top: 90px; left: 50%; transform: translate(-50%, 0);",
+                text: 'Overhead',
+            },
+            {
+                style: "top: 220px; left: 40%; transform: translate(-50%, 0);",
+                text: 'Pilot',
+            },
+            {
+                style: "top: 220px; left: 60%; transform: translate(-50%, 0);",
+                text: 'Copilot',
+            },
+            {
+                style: "top: 250px; left: 5%;",
+                text: 'Left',
+            },
+            {
+                style: "top: 250px; right: 5%;",
+                text: 'Right',
+            },
+            {
+                style: "top: 350px; left: 2%;",
+                text: 'Tablet',
+            },
+            {
+                style: "top: 320px; right: 48%",
+                text: 'Cockpit',
+            },
+            {
+                style: "top: 420px; right: 50%",
+                text: 'FMC',
+            },
+            {
+                style: "bottom: 50px; left: 50%; transform: translate(-50%, 0);",
+                text: 'Pedestal',
+            },
+            {
+                style: "bottom: 5px; left: 5px;",
+                text: 'Fly by',
+            },
+            {
+                style: "bottom: 5px; right: 5px;",
+                text: 'Chase',
+            },
+        ];
+
+        const outButtons = [
+            {
+                style: "top: -20px; left: 50%; transform: translate(-50%, 0);",
+                text: 'Front',
+            },
+            {
+                style: "top: 250px; left: 5%;",
+                text: 'From left',
+            },
+            {
+                style: "top: 250px; right: 7%;",
+                text: 'From right',
+            },
+            {
+                style: "top: 0px; left: 20%;",
+                text: 'Fly by',
+            },
+            {
+                style: "bottom: 00px; left: 50%; transform: translate(-50%, 0);",
+                text: 'Back',
+            },
+            {
+                style: "bottom: 28%; left: 55%;",
+                text: 'Gear',
+            },
+        ];
+
+        const viewButtonClick = (buttonText) => {
+            if (service?.onButtonClick) {
+                service.onButtonClick(buttonText);
+            } else {
+                console.warn('Service function onButtonClick not defined.');
+            }
+        };
+
+        function addButtons() {
+            const supportedButtons = service?.getSupportedViews ? service.getSupportedViews() : [];
+            // function to add buttons dynamically
+            const inDiv = document.getElementById('inFrame');
+            const outDiv = document.getElementById('outFrame');
+            // add buttons to the internalViews div
+            const internalViews = document.getElementById('internalViews');
+            inButtons.filter(button => supportedButtons.includes(button.text))
+                .forEach(button => {
+                const btn = document.createElement('button');
+                btn.style = button.style;
+                btn.innerText = button.text;
+                btn.className = 'button-view float-button';
+                btn.onclick = () => viewButtonClick(button.text);
+                internalViews.appendChild(btn);
+            });
+            const outViews = document.getElementById('outViews');
+            outButtons.filter(button => supportedButtons.includes(button.text))
+            .forEach(button => {
+                const btn = document.createElement('button');
+                btn.style = button.style;
+                btn.innerText = button.text;
+                btn.className = 'button-view float-button';
+                btn.onclick = () => viewButtonClick(button.text);
+                outViews.appendChild(btn);
+            });
+            document.getElementById('btnInViews').onclick = (e) => {
+                inDiv.style.display = 'block';
+                outDiv.style.display = 'none';
+            };
+            document.getElementById('btnOutViews').onclick = (e) => {
+                inDiv.style.display = 'none';
+                outDiv.style.display = 'block';
+            };
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.style.display = 'none';
+        }
+
+        async function loadSettings() {
+            if (!hasConfiguredSettings()) {
+                showError('Error: Simulator settings not configured. Please go to Settings page to configure.');
+                return;
+            }
+
+            const settings = getSimulatorSettings();
+            console.log('Current settings:', settings);
+            
+            const planeConfig = simulatorConfig[settings.simulator]?.find(
+                plane => plane.name === settings.plane
+            );
+            
+            if (!planeConfig?.serviceFile) {
+                const errorMsg = `Error: Service file not found for ${settings.simulator} - ${settings.plane}. Please update configuration.`;
+                console.error(errorMsg);
+                showError(errorMsg);
+                return;
+            }
+
+            try {
+                console.log(`Loading service file: ${planeConfig.serviceFile}`);
+                service = await import(`./${planeConfig.serviceFile}`);
+                console.log('Service loaded successfully');
+                hideError();
+                addButtons();
+            } catch (error) {
+                console.error(`Error loading service file:`, error);
+                showError(`Error: Service file for ${settings.simulator} - ${settings.plane} could not be loaded. Please check configuration.`);
+            }
+        }
+
+        // after the page is loaded, create buttons in parent div id internalViews
+        window.addEventListener('DOMContentLoaded', loadSettings);
+    </script>
+
+<div id="body" style="position: fixed; width: 100%; height: 100%; overflow: hidden;">
+    <button id="btnInViews" class="float-button button-page"
+        style="top: 10px; left: 10px; z-index: 100;">IN</button>
+    <button id="btnOutViews" class="float-button button-page"
+        style="top: 10px; right: 10px; z-index: 100;">OUT</button>
+    <div id="inFrame" style="transform: scale(0.75); transform-origin: top left;">
+        <div style="position: relative; width: 800px; margin: 0 0;" id="internalViews">
+            <img class="img-center" src="views/cockpit-m.jpg" />
+        </div>
+    </div>
+    <div id="outFrame" style="transform: scale(0.75); transform-origin: top left; display: none; padding-top: 50px;">
+        <div style="position: relative; width: 800px; margin: 0 auto; padding-top: 50px;" id="outViews">
+            <img class="img-center" width="600px" src="views/plane-4002.svg" />
+        </div>
+    </div>
+</div>
+
+<div id="error-message" style="display: none; position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background-color: #ff6b6b; color: white; padding: 20px 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); z-index: 1000; max-width: 600px; text-align: center; font-size: 16px; font-weight: bold;"></div>
+
+</body>
+</html>
+
