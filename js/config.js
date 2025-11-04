@@ -28,10 +28,10 @@ export const simulatorConfig = {
     ],
     'MSFS': [
         { name: 'GA', displayName: 'GA', serviceFile: 'views/msfs-ga.js' },
-        { name: '737 MAX', displayName: '737 MAX', serviceFile: 'js/msfs-737max.js' }
+        { name: '737 MAX', displayName: '737 MAX', serviceFile: 'views/msfs-ifly-737.js' }
     ]
 };
 
 export const msfsConfig = {
-    rootUrl: 'http://192.168.1.105:5018',
+    rootUrl: 'http://fs.lan:5018',
 }

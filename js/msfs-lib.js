@@ -31,6 +31,9 @@ const createViewBody = (dataObject) => {
 const makeApiCall = (path, body) => {
     return fetch(`${msfsConfig.rootUrl}/api/${path}`, {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(body),
     })
 };

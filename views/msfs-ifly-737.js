@@ -26,11 +26,16 @@
 import { handleCommonCall } from '../js/msfs-lib.js';
 
 const buttonHandlers = {
-    "Pilot": { viewIndexes: [2, 0, 0], resetView: true },
+    "Pilot": { viewIndexes: [2, 1, 1], resetView: true },
     "Copilot": { viewIndexes: [2, 1, 4], resetView: true },
+    "Tablet": { viewIndexes: [2, 2, 2] },
+    "FMC": { viewIndexes: [2, 2, 3] },
+    "Overhead": { viewIndexes: [2, 2, 4] },
+    "After overhead": { viewIndexes: [2, 2, 5] },
+    "Pedestal": { viewIndexes: [2, 2, 7] },
+    "Cockpit": { viewIndexes: [2, 1, 7] }, // custom view 0, but not reliable
     "Fly by": { viewIndexes: [3, 4, 4] },
     "Chase": { viewIndexes: [3, 0, 0] },
-    "Pedestal": { viewIndexes: [2, 2, 1] },
     "From left": { viewIndexes: [3, 4, 0] },
     "From right": { viewIndexes: [3, 4, 2] },
     "Front": { viewIndexes: [3, 4, 1] },
