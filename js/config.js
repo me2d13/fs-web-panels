@@ -24,7 +24,7 @@ export const menuItems = [
 // To add a new simulator or plane, simply add it to this object
 export const simulatorConfig = {
     'X-Plane': [
-        { name: 'Zibo 737', displayName: 'Zibo 737', serviceFile: 'js/xp-zibo737.js' },
+        { name: 'Zibo 737', displayName: 'Zibo 737', serviceFile: 'views/xpl-zibo-737.js' },
     ],
     'MSFS': [
         { name: 'GA', displayName: 'GA', serviceFile: 'views/msfs-ga.js' },
@@ -34,4 +34,9 @@ export const simulatorConfig = {
 
 export const msfsConfig = {
     rootUrl: 'http://fs.lan:5018',
+}
+
+export const xplaneConfig = {
+    apiUrl: 'http://fs.lan/xpl-api/api/v2',
+    webSocketUrl: 'ws://fs.lan:8020/api/v2',
 }
