@@ -1,5 +1,74 @@
 import { menuItems } from './config.js';
 
+// Function to get menu mode from localStorage
+function getMenuMode() {
+    return localStorage.getItem('menuMode') || 'popup';
+}
+
+// Function to create overlay menu bar at bottom
+const createOverlayMenu = () => {
+    // Create menu bar container
+    const menuBar = document.createElement('div');
+    menuBar.id = 'overlay-menu-bar';
+    menuBar.style.cssText = `
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        padding: 15px;
+        background-color: rgba(26, 26, 26, 0.95);
+        border-top: 2px solid #007bff;
+        z-index: 1000;
+        flex-wrap: wrap;
+    `;
+    
+    // Get current page
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    
+    // Create menu buttons
+    menuItems.forEach(itemDef => {
+        const button = document.createElement('button');
+        button.innerText = itemDef.title;
+        button.style.cssText = `
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        `;
+        
+        if (itemDef.file === currentPage) {
+            button.style.backgroundColor = '#0056b3';
+            button.style.transform = 'scale(1.05)';
+        } else {
+            button.onmouseover = () => {
+                button.style.backgroundColor = '#0056b3';
+                button.style.transform = 'translateY(-2px)';
+            };
+            button.onmouseout = () => {
+                button.style.backgroundColor = '#007bff';
+                button.style.transform = 'translateY(0)';
+            };
+            button.onclick = () => {
+                window.location = itemDef.file;
+            };
+        }
+        
+        menuBar.appendChild(button);
+    });
+    
+    document.body.appendChild(menuBar);
+};
+
 const createFloatingMenu = () => {
     // Create floating menu button
     const menuButton = document.createElement('button');
@@ -147,9 +216,20 @@ const createFloatingMenu = () => {
     document.body.appendChild(overlay);
 };
 
+// Function to initialize the appropriate menu based on settings
+function initializeMenu() {
+    const menuMode = getMenuMode();
+    
+    if (menuMode === 'overlay') {
+        createOverlayMenu();
+    } else {
+        createFloatingMenu();
+    }
+}
+
 // Initialize menu when DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', createFloatingMenu);
+    document.addEventListener('DOMContentLoaded', initializeMenu);
 } else {
-    createFloatingMenu();
+    initializeMenu();
 }

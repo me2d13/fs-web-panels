@@ -37,3 +37,11 @@ export function hasConfiguredSettings() {
     return simulator !== null && plane !== null;
 }
 
+/**
+ * Get the menu display mode
+ * @returns {string} The menu mode ('popup' or 'overlay')
+ */
+export function getMenuMode() {
+    return localStorage.getItem('menuMode') || 'popup';
+}
+

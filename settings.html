@@ -62,23 +62,75 @@
             transform: scale(1.02);
         }
         
-        .current-selection {
-            margin-top: 30px;
+        .current-selection-text {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            font-style: italic;
+            margin: 15px 0 0 0;
+        }
+        
+        .menu-mode-section {
+            margin-top: 40px;
             padding: 20px;
             background-color: #2a2a2a;
             border-radius: 10px;
-            text-align: center;
         }
         
-        .current-selection h3 {
+        .menu-mode-section h2 {
             margin-top: 0;
             color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
         }
         
-        .selection-info {
-            font-size: 20px;
+        .menu-mode-section p {
             color: #e8f5bc;
-            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .menu-mode-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .menu-mode-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            background-color: #3a3a3a;
+            border: 2px solid #555;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .menu-mode-option:hover {
+            background-color: #4a4a4a;
+            border-color: #007bff;
+        }
+        
+        .menu-mode-option input[type="radio"] {
+            margin-right: 15px;
+            margin-top: 3px;
+            cursor: pointer;
+        }
+        
+        .option-label {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .option-label strong {
+            color: #e8f5bc;
+            font-size: 16px;
+        }
+        
+        .option-description {
+            color: #999;
+            font-size: 14px;
         }
         
         @media (max-width: 768px) {
@@ -90,16 +142,33 @@
 </head>
 <body>
     <div class="settings-container">
-        <h1>Settings</h1>
         <p>Select your simulator and plane:</p>
         
         <div class="simulator-grid" id="simulator-grid">
             <!-- Simulator columns will be dynamically generated here -->
         </div>
         
-        <div class="current-selection">
-            <h3>Current Selection</h3>
-            <p class="selection-info" id="current-selection-text">No plane selected</p>
+        <p class="current-selection-text" id="current-selection-text">No plane selected</p>
+        
+        <div class="menu-mode-section">
+            <h2>Menu Display Mode</h2>
+            <p>Choose how the navigation menu is displayed:</p>
+            <div class="menu-mode-options">
+                <label class="menu-mode-option">
+                    <input type="radio" name="menuMode" value="popup" checked>
+                    <span class="option-label">
+                        <strong>Popup</strong>
+                        <span class="option-description">Floating button that opens overlay menu</span>
+                    </span>
+                </label>
+                <label class="menu-mode-option">
+                    <input type="radio" name="menuMode" value="overlay">
+                    <span class="option-label">
+                        <strong>Overlay</strong>
+                        <span class="option-description">Menu buttons always visible at bottom of page</span>
+                    </span>
+                </label>
+            </div>
         </div>
     </div>
     
@@ -167,7 +236,7 @@
         
         // Function to update the display
         function updateSelectionDisplay(simulator, plane) {
-            const displayText = `${simulator} - ${plane}`;
+            const displayText = `Selected: ${simulator} - ${plane}`;
             document.getElementById('current-selection-text').textContent = displayText;
         }
         
@@ -196,12 +265,41 @@
         }
         
         // ========================================
+        // MENU MODE MANAGEMENT
+        // ========================================
+        
+        // Function to load menu mode setting
+        function loadMenuMode() {
+            const menuMode = localStorage.getItem('menuMode') || 'popup';
+            const radioButton = document.querySelector(`input[name="menuMode"][value="${menuMode}"]`);
+            if (radioButton) {
+                radioButton.checked = true;
+            }
+        }
+        
+        // Function to save menu mode
+        function saveMenuMode(mode) {
+            localStorage.setItem('menuMode', mode);
+            console.log(`Menu mode changed to: ${mode}`);
+        }
+        
+        // Add event listeners to radio buttons
+        document.querySelectorAll('input[name="menuMode"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    saveMenuMode(this.value);
+                }
+            });
+        });
+        
+        // ========================================
         // INITIALIZATION
         // ========================================
         
         // Initialize immediately - config is already imported
         buildUI();
         loadSelection();
+        loadMenuMode();
     </script>
 </body>
 </html>
