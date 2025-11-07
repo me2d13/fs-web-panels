@@ -12,6 +12,10 @@ export const menuItems = [
         title: 'Views',
     },
     {
+        file: 'gear.html',
+        title: 'Gear',
+    },
+    {
         file: 'settings.html',
         title: 'Settings',
     },
