@@ -5,6 +5,7 @@
  */
 
 import { msfsConfig } from './config.js';
+import { hasConfiguredSettings, getSimulatorSettings } from './settings-utils.js';
 
 export const handleCommonCall = (dataObject) => {
     if (dataObject.path && dataObject.body) {
@@ -37,3 +38,75 @@ const makeApiCall = (path, body) => {
         body: JSON.stringify(body),
     })
 };
+
+const onVariablesChanged = (variables, callback) => {
+    // variables can be
+    // 1. single string as one variable name
+    // 2. array of strings as multiple variable names
+    // 3. array of objects as body for /api/simvar/register websocket call
+    // in any case convert them to type 3
+    let requestBody = [];
+    if (typeof variables === 'string') {
+        requestBody = [{ simVarName: variables }];
+    } else if (Array.isArray(variables)) {
+        for (const variable of variables) {
+            if (typeof variable === 'string') {
+                requestBody.push({ simVarName: variable });
+            } else if (typeof variable === 'object') {
+                requestBody.push(variable);
+            } else {
+                console.warn(`Invalid variable type: ${typeof variable}, skipping.`);
+            }
+        }
+    }
+    if (requestBody.length === 0) {
+        console.warn(`No valid variables provided, skipping.`);
+        return;
+    }
+    
+    // Create WebSocket connection to MSFS API
+    const wsUrl = msfsConfig.rootUrl.replace(/^http/, 'ws') + '/api/simvar/register?interval=1';
+    const ws = new WebSocket(wsUrl);
+    
+    ws.onopen = () => {
+        console.log('WebSocket connected to MSFS API');
+        // Send the request body as the first message
+        ws.send(JSON.stringify(requestBody));
+    };
+    
+    ws.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            callback(data);
+        } catch (error) {
+            console.error('Error parsing WebSocket message:', error);
+        }
+    };
+    
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+    
+    ws.onclose = () => {
+        console.log('WebSocket connection closed');
+    };
+    
+    // Return the WebSocket so caller can close it if needed
+    return ws;
+}
+
+export const msfsApi = {
+    makeApiCall: makeApiCall,
+    onVariablesChanged: onVariablesChanged,
+}
+
+export const forMsfs = (callback) => {
+    if (hasConfiguredSettings()) {
+        const settings = getSimulatorSettings();
+        if (settings.simulator === 'MSFS') {
+            // get the plane name
+            const planeName = settings.plane;
+            callback(msfsApi, planeName);
+        }
+    }
+}
