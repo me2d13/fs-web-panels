@@ -10,7 +10,7 @@ export function ParkingBrakePanel() {
             msfsApi.onVariablesChanged(['BRAKE PARKING INDICATOR'], (data) => {
                 // here the response will be array of objects with just one element
                 // so we need to get the value from the first element
-                const value = data[0].Value;
+                const value = data['BRAKE PARKING INDICATOR'];
                 setParkingBrake(value === 1);
                 //console.log('ws response for BRAKE PARKING INDICATOR:', data);
             });

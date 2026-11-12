@@ -20,23 +20,23 @@ export function GearPanel() {
                 'GEAR RIGHT POSITION'
             ], (data) => {
                 // data will be array with three elements
-                setGearNose(data[0].Value);
-                setGearLeft(data[1].Value);
-                setGearRight(data[2].Value);
-                
+                setGearNose(data['GEAR CENTER POSITION']);
+                setGearLeft(data['GEAR LEFT POSITION']);
+                setGearRight(data['GEAR RIGHT POSITION']);
+
                 // Update lever position based on actual gear state
                 // If any gear is mostly up (< 0.05), show lever up
                 // If all gears are mostly down (> 0.95), show lever down
-                const allUp = data[0].Value < 0.05 && data[1].Value < 0.05 && data[2].Value < 0.05;
-                const allDown = data[0].Value > 0.95 && data[1].Value > 0.95 && data[2].Value > 0.95;
-                
+                const allUp = data['GEAR CENTER POSITION'] < 0.05 && data['GEAR LEFT POSITION'] < 0.05 && data['GEAR RIGHT POSITION'] < 0.05;
+                const allDown = data['GEAR CENTER POSITION'] > 0.95 && data['GEAR LEFT POSITION'] > 0.95 && data['GEAR RIGHT POSITION'] > 0.95;
+
                 if (allUp) {
                     setLeverPosition('up');
                 } else if (allDown) {
                     setLeverPosition('down');
                 }
-                
-                //console.log('Gear positions - Nose:', data[0].Value, 'Left:', data[1].Value, 'Right:', data[2].Value);
+
+                //console.log('Gear positions - Nose:', data['GEAR CENTER POSITION'], 'Left:', data['GEAR LEFT POSITION'], 'Right:', data['GEAR RIGHT POSITION']);
             });
         });
     }, []);
@@ -50,7 +50,7 @@ export function GearPanel() {
     const handleLeverClick = () => {
         const newPosition = leverPosition === 'down' ? 'up' : 'down';
         setLeverPosition(newPosition);
-        
+
         forMsfs((msfsApi, planeName) => {
             // Send the appropriate gear event based on the desired position
             const eventName = newPosition === 'up' ? 'GEAR_UP' : 'GEAR_DOWN';

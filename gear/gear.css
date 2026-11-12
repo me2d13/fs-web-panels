@@ -3,6 +3,8 @@
     height: 100vh;
     gap: 1rem;
     padding: 1rem;
+    padding-bottom: 80px;
+    /* Space for overlay menu */
     box-sizing: border-box;
 }
 
@@ -45,12 +47,12 @@
 }
 
 .parking-brake-panel {
-    flex: 1;
+    flex: 0.8;
     min-height: 0;
 }
 
 .gear-panel {
-    flex: 2;
+    flex: 2.5;
     min-height: 0;
 }
 
@@ -60,8 +62,8 @@
 
 /* Parking Brake Styles */
 .brake-indicator {
-    width: 140px;
-    height: 140px;
+    width: 100px;
+    height: 100px;
     border-radius: 8px;
     border: 4px solid #4a5568;
     background: #1a1a2e;
@@ -91,7 +93,7 @@
 }
 
 .brake-status-text {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     font-weight: bold;
     color: white;
     letter-spacing: 0.1em;
@@ -117,7 +119,7 @@
 
 .gear-indicator-row {
     display: flex;
-    gap: 6rem;
+    gap: 4rem;
 }
 
 .gear-indicator {
@@ -128,8 +130,8 @@
 }
 
 .gear-light {
-    width: 60px;
-    height: 60px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     border: 3px solid #4a5568;
     background: #1a1a2e;
@@ -173,21 +175,21 @@
 
 .gear-lever {
     position: relative;
-    width: 180px;
-    height: 320px;
+    width: 140px;
+    height: 220px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
 }
 
-.gear-lever > div {
+.gear-lever>div {
     position: absolute;
 }
 
 .lever-base {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     background: linear-gradient(145deg, #4b5563, #374151);
     border: 4px solid #6b7280;
     border-radius: 50%;
@@ -210,8 +212,8 @@
 }
 
 .lever-handle {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     background: linear-gradient(145deg, #9ca3af, #6b7280);
     border: 4px solid #4b5563;
     border-radius: 6px;
@@ -223,21 +225,21 @@
 }
 
 .gear-lever.down .lever-shaft {
-    height: 100px;
+    height: 70px;
     top: 50%;
 }
 
 .gear-lever.down .lever-handle {
-    top: calc(50% + 100px);
+    top: calc(50% + 70px);
 }
 
 .gear-lever.up .lever-shaft {
-    height: 100px;
+    height: 70px;
     bottom: 50%;
 }
 
 .gear-lever.up .lever-handle {
-    bottom: calc(50% + 100px);
+    bottom: calc(50% + 70px);
 }
 
 .gear-lever:hover .lever-handle {
@@ -252,7 +254,7 @@
     transform: translateY(-50%);
     display: flex;
     flex-direction: column;
-    gap: 7rem;
+    gap: 5rem;
     pointer-events: none;
 }
 
@@ -269,25 +271,32 @@
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
 /* Flaps Panel Styles */
 .flaps-content-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
     width: 100%;
     height: 100%;
-    padding: 1rem;
+    padding: 0.5rem;
 }
 
 .flaps-indicator-section {
     flex: 0 0 40%;
     display: flex;
     flex-direction: row;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: center;
     justify-content: center;
 }
@@ -296,15 +305,15 @@
     background: #1a1a2e;
     border: 3px solid #4a5568;
     border-radius: 6px;
-    padding: 1rem;
+    padding: 0.5rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    min-width: 60px;
+    min-width: 50px;
     display: flex;
     justify-content: center;
 }
 
 .flaps-current-value {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     font-weight: bold;
     color: #60a5fa;
 }
@@ -312,20 +321,20 @@
 .flaps-positions-bar {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.25rem;
 }
 
 .position-marker {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
 }
 
 .position-marker::before {
     content: '';
-    width: 20px;
-    height: 8px;
+    width: 15px;
+    height: 6px;
     background: #4a5568;
     border-radius: 2px;
     transition: all 0.3s ease;
@@ -366,7 +375,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 1.5rem 0;
+    padding: 1rem 0;
     box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
@@ -442,4 +451,3 @@
     background: #374151;
     border-radius: 2px;
 }
-

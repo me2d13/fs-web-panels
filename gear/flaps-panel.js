@@ -22,29 +22,29 @@ export function FlapsPanel() {
                 'FLAPS HANDLE INDEX'
             ], (data) => {
                 // Convert radians to degrees
-                const leftDegrees = data[0].Value * (180 / Math.PI);
-                const rightDegrees = data[1].Value * (180 / Math.PI);
-                
+                const leftDegrees = data['TRAILING EDGE FLAPS LEFT ANGLE'] * (180 / Math.PI);
+                const rightDegrees = data['TRAILING EDGE FLAPS RIGHT ANGLE'] * (180 / Math.PI);
+
                 setFlapsLeftAngle(leftDegrees);
                 setFlapsRightAngle(rightDegrees);
-                
+
                 // FLAPS HANDLE INDEX gives us the detent position
-                setFlapsHandle(data[2].Value);
-                
-                //console.log('Flaps - Left:', leftDegrees.toFixed(1), '° Right:', rightDegrees.toFixed(1), '° Handle:', data[2].Value);
+                setFlapsHandle(data['FLAPS HANDLE INDEX']);
+
+                //console.log('Flaps - Left:', leftDegrees.toFixed(1), '° Right:', rightDegrees.toFixed(1), '° Handle:', data['FLAPS HANDLE INDEX']);
             });
         });
     }, []);
 
     const handleLeverClick = (index) => {
         setFlapsHandle(index);
-        
+
         forMsfs((msfsApi, planeName) => {
             // FLAPS_SET event takes a parameter from 0 to 16383
             // Map the index to this range based on total number of positions
             const maxValue = 16383;
             const flapValue = Math.round((index / (FLAP_POSITIONS.length - 1)) * maxValue);
-            
+
             msfsApi.makeApiCall('event/send', {
                 name: 'FLAPS_SET',
                 value: flapValue
@@ -57,12 +57,12 @@ export function FlapsPanel() {
         // Check if left and right flaps are the same (within 0.5 degree tolerance)
         const tolerance = 0.5;
         const difference = Math.abs(flapsLeftAngle - flapsRightAngle);
-        
+
         if (difference > tolerance) {
             // Flaps don't match - failure indication
             return null;
         }
-        
+
         // Return average of both sides, rounded to nearest degree
         const averageAngle = (flapsLeftAngle + flapsRightAngle) / 2;
         return Math.round(averageAngle);
@@ -80,14 +80,14 @@ export function FlapsPanel() {
                         </div>
                         <div class="flaps-positions-bar">
                             ${FLAP_POSITIONS.map((deg, index) => {
-                                const currentDeg = getCurrentFlapDegrees();
-                                const isActive = currentDeg !== null && currentDeg >= deg && (index === FLAP_POSITIONS.length - 1 || currentDeg < FLAP_POSITIONS[index + 1]);
-                                return html`
+        const currentDeg = getCurrentFlapDegrees();
+        const isActive = currentDeg !== null && currentDeg >= deg && (index === FLAP_POSITIONS.length - 1 || currentDeg < FLAP_POSITIONS[index + 1]);
+        return html`
                                     <div class="position-marker ${isActive ? 'active' : ''}">
                                         <span class="position-label">${deg}</span>
                                     </div>
                                 `;
-                            })}
+    })}
                         </div>
                     </div>
                     
