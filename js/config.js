@@ -32,7 +32,8 @@ export const simulatorConfig = {
     ],
     'MSFS': [
         { name: 'GA', displayName: 'GA', serviceFile: 'views/msfs-ga.js' },
-        { name: '737 MAX', displayName: '737 MAX', serviceFile: 'views/msfs-ifly-737.js' }
+        { name: '737 MAX', displayName: '737 MAX', serviceFile: 'views/msfs-ifly-737.js' },
+        { name: '737 PMDG', displayName: '737 PMDG', serviceFile: 'views/msfs-pmdg-737.js' }
     ]
 };
 
